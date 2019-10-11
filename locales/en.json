@@ -1,0 +1,9 @@
+{
+	"responses": {
+		"invalid_request": "Invalid data",
+		"something_went_wrong": "Something went wrong",
+		"not_authorized": "Not authorized",
+		"user_not_found": "User not found",
+		"password_invalid": "Password invalid"
+	}
+}
