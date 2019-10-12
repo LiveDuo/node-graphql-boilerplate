@@ -1,17 +1,16 @@
 import { UserModel } from '../../models/User/user'
-import HttpStatusCodes from 'http-status-codes'
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (_, params) => {
 	try {
-		const result = await UserModel.findByIdAndDelete(req.userId)
+		const result = await UserModel.findByIdAndDelete(params.userId)
 		if (result) {
-			return res.status(HttpStatusCodes.OK).end()
+			return {}
 		} else {
-			return res.status(HttpStatusCodes.BAD_REQUEST).send({message: res.__('responses').something_went_wrong})
+			throw new Error('TODO')
 		}
 	} catch (error) {
 		console.log(error.message)
-		return res.status(HttpStatusCodes.BAD_REQUEST).send({message: res.__('responses').something_went_wrong})
+		throw new Error('TODO')
 	}
 }
 
