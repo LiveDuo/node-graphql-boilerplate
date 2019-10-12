@@ -26,7 +26,7 @@ const doAddUser = async (_, params) => {
 	try {
 		const result = await User.save()
 		const token = sign({ id: result._id }, process.env.JWT_KEY)
-		return { jwt: token }
+		return { jwt: token, ...result._doc }
 	} catch (error) {
 		console.log(error.message)
 		throw new Error('TODO')

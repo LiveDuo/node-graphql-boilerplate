@@ -1,6 +1,8 @@
 import { UserModel } from '../../models/User/user'
 
-const deleteUser = async (_, params) => {
+const doDeleteUser = async (_, params, context) => {
+	console.log(params)
+	console.log(context)
 	try {
 		const result = await UserModel.findByIdAndDelete(params.userId)
 		if (result) {
@@ -14,4 +16,4 @@ const deleteUser = async (_, params) => {
 	}
 }
 
-export { deleteUser }
+export { doDeleteUser }

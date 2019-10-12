@@ -1,10 +1,9 @@
-import HttpStatusCodes from 'http-status-codes'
 import { verify } from 'jsonwebtoken'
 
 const verifyToken = async (req, res, next) => {
 	let authHeader = req.headers['authorization']
 	if (!authHeader) {
-		return res.status(HttpStatusCodes.UNAUTHORIZED).send({ message: req.__('responses').not_authorized})
+		return false
 	}
 
 	let token = authHeader.split(' ')[1]
@@ -15,7 +14,7 @@ const verifyToken = async (req, res, next) => {
 		req.userId = decoded.id
 		next()
 	} catch (error) {
-		return res.status(HttpStatusCodes.UNAUTHORIZED).send({ message: req.__('responses').not_authorized})
+		return false
 	}
 }
 

@@ -5,6 +5,7 @@ import { getUser } from '../../controllers/users/getUser'
 import { doAddUser } from '../../controllers/users/doAddUser'
 import { doLoginUser } from '../../controllers/users/doLoginUser'
 import { doUpdateUser } from '../../controllers/users/doUpdateUser'
+import { doDeleteUser } from '../../controllers/users/doDeleteUser'
 
 // import { onUserUpdated } from '../../controllers/users/onUserUpdated'
 
@@ -12,6 +13,12 @@ import { typeDate } from '../../controllers/scalars/typeDate'
 
 const typeDefs = gql`
     scalar Date
+
+    type File {
+        filename: String!
+        mimetype: String!
+        encoding: String!
+    }
 
     type User {
         id: String
@@ -30,7 +37,12 @@ const typeDefs = gql`
             first_name
             last_name
             email
+            jwt
         }
+    }
+
+    mutation doDeleteUser {
+        doDeleteUser
     }
 
     mutation doUpdateUser {
@@ -46,6 +58,7 @@ const typeDefs = gql`
             first_name
             last_name
             email
+            jwt
         }
     }
 
@@ -53,6 +66,8 @@ const typeDefs = gql`
         doAddUser(first_name: String!, last_name: String!, email: String!, password: String!): User
         doUpdateUser(first_name: String, last_name: String): User
         doLoginUser(email: String!, password: String!): User
+        doDeleteUser: Boolean
+        singleUpload(file: Upload!): File!
     }
 
     type Subscription {
@@ -70,7 +85,16 @@ const resolvers = {
     Mutation: {
         doAddUser: doAddUser,
         doUpdateUser: doUpdateUser,
-        doLoginUser: doLoginUser
+        doLoginUser: doLoginUser,
+        doDeleteUser: doDeleteUser,
+        singleUpload: (_, params) => {
+            return params.file.then(file => {
+                //Contents of Upload scalar: https://github.com/jaydenseric/graphql-upload#class-graphqlupload
+                //file.stream is a node stream that contains the contents of the uploaded file
+                //node stream api: https://nodejs.org/api/stream.html
+                return file
+            });
+        },
     },
     Date: typeDate
 }
