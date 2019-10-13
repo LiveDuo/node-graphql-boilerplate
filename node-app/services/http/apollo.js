@@ -7,6 +7,9 @@ import { doLoginUser } from '../../controllers/users/doLoginUser'
 import { doUpdateUser } from '../../controllers/users/doUpdateUser'
 import { doDeleteUser } from '../../controllers/users/doDeleteUser'
 
+import { doTestUpload } from '../../controllers/test/doTestUpload'
+import { doTestUploadResized } from '../../controllers/test/doTestUploadResized'
+
 // import { onUserUpdated } from '../../controllers/users/onUserUpdated'
 
 import { typeDate } from '../../controllers/scalars/typeDate'
@@ -14,10 +17,12 @@ import { typeDate } from '../../controllers/scalars/typeDate'
 const typeDefs = gql`
     scalar Date
 
-    type File {
-        filename: String!
-        mimetype: String!
-        encoding: String!
+    type FileUpload {
+        url: String!
+    }
+
+    type FileUploadResized {
+        urls: [String!]!
     }
 
     type User {
@@ -67,7 +72,8 @@ const typeDefs = gql`
         doUpdateUser(first_name: String, last_name: String): User
         doLoginUser(email: String!, password: String!): User
         doDeleteUser: Boolean
-        singleUpload(file: Upload!): File!
+        doTestUpload(file: Upload!): FileUpload!
+        doTestUploadResized(file: Upload!): FileUploadResized!
     }
 
     type Subscription {
@@ -87,14 +93,8 @@ const resolvers = {
         doUpdateUser: doUpdateUser,
         doLoginUser: doLoginUser,
         doDeleteUser: doDeleteUser,
-        singleUpload: (_, params) => {
-            return params.file.then(file => {
-                //Contents of Upload scalar: https://github.com/jaydenseric/graphql-upload#class-graphqlupload
-                //file.stream is a node stream that contains the contents of the uploaded file
-                //node stream api: https://nodejs.org/api/stream.html
-                return file
-            });
-        },
+        doTestUpload: doTestUpload,
+        doTestUploadResized: doTestUploadResized,
     },
     Date: typeDate
 }

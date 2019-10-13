@@ -50,6 +50,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.1",
     "node-cache": "^4.2.1",
+    "sharp": "^0.23.1",
     "validator": "^11.1.0"
   }
 }
