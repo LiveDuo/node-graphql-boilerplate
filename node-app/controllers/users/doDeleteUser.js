@@ -1,18 +1,29 @@
 import { UserModel } from '../../models/User/user'
 
-const doDeleteUser = async (_, params, context) => {
-	console.log(params)
-	console.log(context)
+import { verifyToken } from '../../services/authentication/verifyToken'
+
+const doDeleteUser = async (_1, _2, context) => {
+
+	let tokenDecoded
 	try {
-		const result = await UserModel.findByIdAndDelete(params.userId)
-		if (result) {
-			return {}
-		} else {
-			throw new Error('TODO')
-		}
+		tokenDecoded = await verifyToken(context.authHeader)
+	} catch (error) {
+			throw new Error('Authentication failed')
+	}
+
+	let userId = tokenDecoded.id
+	let result
+	try {
+		result = await UserModel.findByIdAndDelete(userId)
 	} catch (error) {
 		console.log(error.message)
-		throw new Error('TODO')
+		throw new Error('Deleting error')
+	}
+
+	if (result) {
+		return true
+	} else {
+		throw new Error('User not found')
 	}
 }
 

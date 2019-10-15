@@ -6,18 +6,16 @@ import { getCachedThenQuery } from '../../services/caching/nodeCache'
 
 const doLoginUser = async (_, params) => {
 
-	const email = params.email
-	const password = params.password
-	const promise = UserModel.findOne({email: email})
+	const promise = UserModel.findOne({email: params.email})
 
-	const result = await getCachedThenQuery('login-user-email-'+email, promise)
+	const result = await getCachedThenQuery('login-user-email-'+params.email, promise)
 	if (!result) {
-		throw new Error('TODO')
+		throw new Error('User not found')
 	}
 
-	const isValid = await compare(password, result.password)
+	const isValid = await compare(params.password, result.password)
 	if (!isValid) {
-		throw new Error('TODO')
+		throw new Error('Password is invalid')
 	}
 
 	try {
@@ -25,7 +23,7 @@ const doLoginUser = async (_, params) => {
 		return { jwt: token, ...result._doc }
 	} catch (error) {
 		console.log(error.message)
-		throw new Error('TODO')
+		throw new Error('Token hashing error')
 	}
 }
 

@@ -7,17 +7,19 @@ const getUser = async (_, params) => {
 	const userId = params.id
 	const promise = UserModel.findById(userId)
 
+	let result
 	try {
-		let result = await getCachedThenQuery('get-user-id-'-userId, promise)
-		if (result) {
-			result.password = undefined // maybe a bad idea
-			return result
-		} else {
-			throw new Error('TODO')
-		}
+		result = await getCachedThenQuery('get-user-id-'-userId, promise)
 	} catch (error) {
 		console.log(error.message)
-		throw new Error('TODO')
+		throw new Error('User not found')
+	}
+
+	if (result) {
+		result.password = undefined // maybe a bad idea
+		return result
+	} else {
+		throw new Error('User not found')
 	}
 }
 

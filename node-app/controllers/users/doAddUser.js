@@ -4,33 +4,34 @@ import { hash } from 'bcrypt'
 
 const doAddUser = async (_, params) => {
 
-	const user = {
-		first_name: params.first_name,
-		last_name: params.last_name,
-		email: params.email,
-		gender: params.gender,
-		language: params.language,
-		age: params.age,
-		favorites: params.favorites
-	}
-
+	let password
 	try {
-		user.password = await hash(params.password, 10)
+		password = await hash(params.password, 10)
 	} catch (error) {
 		console.log(error.message)
-		throw new Error('TODO')
+		throw new Error('Password hashing error')
 	}
 
-	const User = new UserModel(user)
+	const User = new UserModel({...params, password})
 	
+	let result
 	try {
-		const result = await User.save()
-		const token = sign({ id: result._id }, process.env.JWT_KEY)
-		return { jwt: token, ...result._doc }
+		result = await User.save()
 	} catch (error) {
 		console.log(error.message)
-		throw new Error('TODO')
+		throw new Error('User saving error')
 	}
+
+	let token
+	try {
+		token = sign({ id: result._id }, process.env.JWT_KEY)
+	} catch (error) {
+		console.log(error.message)
+		throw new Error('Token signing error')
+	}
+
+	return { jwt: token, ...result._doc }
+	
 }
 
 export { doAddUser }
