@@ -1,30 +1,42 @@
 import { UserModel } from '../../models/User/user'
 
-const doUpdateUser = async (_, params) => {
+import { verifyToken } from '../../services/authentication/verifyToken'
 
-	let imageUrl
-  if (params.file && params.file.cloudStoragePublicUrl) {
-    imageUrl = params.file.cloudStoragePublicUrl
-  }
+import { uploadImageResizedToFolderpath } from '../../services/upload/uploadImages'
+
+const doUpdateUserAsync = async (userId, file) => {
+	let mediaUrls = await uploadImageResizedToFolderpath(file, 'update-multiple')
+	let result = await UserModel.findByIdAndUpdate(userId, {mediaUrls: mediaUrls})
+	console.log(`updated ${result._id} async`)
+}
+
+const doUpdateUser = async (_, params, context) => {
+
+	let tokenDecoded
+	try {
+		tokenDecoded = await verifyToken(context.authHeader)
+	} catch (error) {
+			throw new Error('Authentication failed')
+	}
 	
-	//BUG overrides original data
-	const user = {
-			first_name: params.first_name,
-			last_name: params.last_name,
-			gender: params.gender,
-			language: params.language,
-			age: params.age,
-			favorites: params.favorites,
-			imageUrl: imageUrl
+	try {
+		if (params.isSync) {
+			let mediaUrls = await uploadImageResizedToFolderpath(params.file, 'update-multiple')
+			params.image_urls = mediaUrls
+		} else {
+			doUpdateUserAsync(tokenDecoded.id, params.file)
 		}
-		
-		try {
-			await UserModel.findByIdAndUpdate(params.id, user)
-			
-			return user
 	} catch (error) {
 		console.log(error.message)
-		throw new Error('TODO')
+		throw new Error('Image upload failed')
+	}
+	
+	try {
+		let result = await UserModel.findByIdAndUpdate(tokenDecoded.id, params)
+		return {...result._doc}
+	} catch (error) {
+		console.log(error.message)
+		throw new Error('User not found')
 	}
 }
 
