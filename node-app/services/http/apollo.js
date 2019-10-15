@@ -99,15 +99,10 @@ const resolvers = {
     Date: typeDate
 }
 
-const context = ({ req, connection }) => {
+const context = async ({ req, connection }) => {
 
-    let token
-    if (connection) {
-        token = connection.context.token || ""
-    } else {
-        token = req.headers.authorization || ""
-    }
-    return { token };
+    let authHeader = (connection) ? connection.context.token : req.headers.authorization
+    return { authHeader }
 }
 
 const subscriptions = {
