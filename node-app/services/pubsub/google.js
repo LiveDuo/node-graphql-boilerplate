@@ -1,4 +1,4 @@
-const { GooglePubSub } = require('@axelspringer/graphql-google-pubsub')
+import { GooglePubSub } from '@axelspringer/graphql-google-pubsub'
 
 const options = {
     projectId: process.env.GOOGLE_PUBSUB_PROJECT_ID,
@@ -10,6 +10,6 @@ const options = {
 const topic2SubName = (topicName) => `${topicName}-subscription`
 const commonMessageHandler = ({attributes = {}, data = ''}) => JSON.parse(data.toString())
 
-const pubsubGoogle = new GooglePubSub(options, topic2SubName, commonMessageHandler)
+const pubsub = new GooglePubSub(options, topic2SubName, commonMessageHandler)
 
-export { pubsubGoogle }
+export { pubsub }

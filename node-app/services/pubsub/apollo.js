@@ -1,5 +1,5 @@
-const { PubSub } = require('apollo-server')
+import { PubSub } from 'apollo-server'
 
-const pubsubApollo = new PubSub()
+const pubsub = new PubSub()
 
-export { pubsubApollo }
+export { pubsub }

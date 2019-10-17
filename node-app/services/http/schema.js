@@ -65,7 +65,7 @@ const typeDefs = gql`
     }
 
     type Subscription {
-        onUserUpdated: User
+        onUpdateUser: User
     }
 `
 

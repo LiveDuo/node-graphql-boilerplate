@@ -4,6 +4,8 @@ import { verifyToken } from '../../services/authentication/verifyToken'
 
 import { uploadImageResizedToFolderpath } from '../../services/upload/uploadImages'
 
+import { pubsub } from '../../services/pubsub/apollo'
+
 const doUpdateUserAsync = async (userId, file) => {
 	let mediaUrls = await uploadImageResizedToFolderpath(file, 'update-multiple')
 	let result = await UserModel.findByIdAndUpdate(userId, {mediaUrls: mediaUrls})
@@ -19,20 +21,23 @@ const doUpdateUser = async (_, params, context) => {
 			throw new Error('Authentication failed')
 	}
 	
-	try {
-		if (params.isSync) {
-			let mediaUrls = await uploadImageResizedToFolderpath(params.file, 'update-multiple')
-			params.image_urls = mediaUrls
-		} else {
-			doUpdateUserAsync(tokenDecoded.id, params.file)
+	if (params.file) {
+		try {
+			if (params.isSync) {
+				let mediaUrls = await uploadImageResizedToFolderpath(params.file, 'update-multiple')
+				params.image_urls = mediaUrls
+			} else {
+				doUpdateUserAsync(tokenDecoded.id, params.file)
+			}
+		} catch (error) {
+			console.log(error.message)
+			throw new Error('Image upload failed')
 		}
-	} catch (error) {
-		console.log(error.message)
-		throw new Error('Image upload failed')
 	}
 	
 	try {
 		let result = await UserModel.findByIdAndUpdate(tokenDecoded.id, params)
+		pubsub.publish('USER_UPDATED', { onUpdateUser: {...result._doc}})
 		return {...result._doc}
 	} catch (error) {
 		console.log(error.message)

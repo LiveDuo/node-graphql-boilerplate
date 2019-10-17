@@ -10,7 +10,7 @@ import { doDeleteUser } from '../../controllers/users/doDeleteUser'
 import { doTestUpload } from '../../controllers/test/doTestUpload'
 import { doTestUploadResized } from '../../controllers/test/doTestUploadResized'
 
-// import { onUserUpdated } from '../../controllers/users/onUserUpdated'
+import { onUpdateUser } from '../../controllers/users/onUpdateUser'
 
 import { typeDate } from '../../controllers/scalars/typeDate'
 
@@ -18,7 +18,7 @@ import { typeDefs } from './schema'
 
 const resolvers = {
     Subscription: {
-        // onUserUpdated: onUserUpdated
+        onUpdateUser: onUpdateUser
     },
     Query: {
         getUser: getUser,
@@ -42,12 +42,12 @@ const context = async ({ req, connection }) => {
 
 const subscriptions = {
     onConnect: (connectionParams, webSocket) => {
-        // console.log('Websocket CONNECTED')
+        console.log('Websocket CONNECTED')
 
         return { token: connectionParams.token }
     },
     onDisconnect: () => {
-        // console.log('Websocket CONNECTED')
+        console.log('Websocket DISCONNECTED')
     },
 }
 const apolloServer = new ApolloServer({ typeDefs, resolvers, context, subscriptions})
