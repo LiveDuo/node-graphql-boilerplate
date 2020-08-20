@@ -44,7 +44,7 @@
     "@axelspringer/graphql-google-pubsub": "^1.2.1",
     "@google-cloud/storage": "^3.3.1",
     "apollo-server": "^2.9.6",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "dotenv": "^8.1.0",
     "i18n": "^0.8.3",
     "jsonwebtoken": "^8.5.1",
